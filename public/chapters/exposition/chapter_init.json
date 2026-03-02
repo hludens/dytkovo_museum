@@ -1,0 +1,42 @@
+{
+  "pages": [
+ {
+      "title": "Интерактивная карта музея",
+      "image": "chapters/exposition/exposition.jpg",
+      "mapPoints": [
+        {
+          "id": "point1",
+          "x": 90,
+          "y": 28,
+          "title": "Люстра",
+          "image": "chapters/exposition/1.jpg",
+          "description": "спуск."
+        },
+        {
+          "id": "point2",
+          "x": 70,
+          "y": 65,
+          "title": "Гирлянда",
+          "image": "chapters/exposition/2.jpg",
+          "description": "огромное украшение"
+        },
+        {
+          "id": "point3",
+          "x": 30,
+          "y": 25,
+          "title": "Старинные изделия",
+          "image": "chapters/exposition/3.jpg",
+          "description": "Синий зал"
+        },
+        {
+          "id": "point4",
+          "x": 60,
+          "y": 30,
+          "title": "Зал стеклянных скульптур",
+          "image": "chapters/exposition/4.jpg",
+          "description": "Зал, где представлены уникальные стеклянные скульптуры."
+        }
+      ]
+    }
+  ]
+}

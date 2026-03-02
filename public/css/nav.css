@@ -1,0 +1,134 @@
+/* === Верхнее меню === */
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 2.5rem;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-family: sans-serif;
+  height: 7rem;
+}
+
+.logo-wrapper {
+  flex: 0 0 auto;
+  min-width: 120px;
+  margin-right: 1rem;
+}
+
+.logo {
+
+  width: auto;
+  height: 100px;
+
+}
+
+.menu-wrapper {
+  flex: 0 0 85%; /* Теперь ровно 3/4 ширины экрана */
+  display: flex;
+  justify-content: flex-end;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.menu-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.menu-list {
+  display: flex;
+  gap: 0.5rem; /* Увеличим зазор между кнопками */
+  list-style: none;
+  margin: 1rem 0;
+  padding: 1rem 0;
+  min-width: max-content;
+  scroll-snap-type: x mandatory;
+  height: 100%;
+  align-items: center;
+}
+
+.menu-list li {
+  flex: 0 0 calc((100% - 1rem) / 6); /* 6 пунктов = по ~14% с учётом gap */
+  min-width: 160px; /* чтобы не сжимались слишком сильно */
+  scroll-snap-align: start;
+  box-sizing: border-box;
+}
+
+/* === Кнопки меню === */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; /* больше места между иконкой и текстом */
+  padding: 0.75rem 0.5rem;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  height: 3.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Фон неактивных кнопок — равномерный стиль */
+.nav-item:not(.active) {
+  background: linear-gradient(to right, rgba(25, 205, 236, 0.5), rgba(10, 91, 243, 0.5));
+  color: white;
+}
+
+/* Активная кнопка — с анимацией градиента */
+.nav-item.active {
+  animation: gradientGlow 3s linear infinite;
+  background: linear-gradient(270deg, #00e5ff, #0099cc);
+  background-size: 400% 400%;
+  color: white;
+  font-weight: bold;
+  transform: scale(1.05);
+}
+
+/* Иконка рядом с текстом */
+.icon-wrapper {
+  width: 3rem;
+  height: 3rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-wrapper img,
+.icon-wrapper svg {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+  filter: brightness(1.1);
+  transition: filter 0.3s ease;
+}
+
+/* Подпись справа от иконки */
+.nav-label {
+  flex-grow: 1;
+  font-size: 0.75rem;
+  text-align: center;
+  margin: 0px 0px 0px -20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Анимация градиента для активного пункта */
+@keyframes gradientGlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+

@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Симулятор выдувания стекла</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* UI элементы */
+        .ui-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .ui-container > * {
+            pointer-events: auto;
+        }
+
+        /* Кнопка нагрева */
+        .heat-button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff6b6b, #ff3838);
+            border: 3px solid #fff;
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .heat-button:active {
+            transform: translateX(-50%) scale(0.95);
+            box-shadow: 0 2px 10px rgba(255, 107, 107, 0.8);
+        }
+
+        .heat-button.heating {
+            background: radial-gradient(circle, #ffeb3b, #ff9800);
+            animation: pulse 0.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { box-shadow: 0 4px 20px rgba(255, 235, 59, 0.5); }
+            to { box-shadow: 0 4px 30px rgba(255, 235, 59, 0.9); }
+        }
+
+        /* Кнопки ориентации */
+        .orientation-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .orientation-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .orientation-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #fff;
+            transform: scale(1.1);
+        }
+
+        /* Ползунок скорости */
+        .speed-control {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .speed-label {
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .speed-slider {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Размер инструмента */
+        .tool-size {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .size-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .size-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #fff;
+        }
+
+        /* Индикатор температуры */
+        .temp-indicator {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            width: 40px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+
+        .temp-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to top, #ff3838, #ffeb3b);
+            transition: height 0.3s ease;
+        }
+
+        /* Инструмент */
+        .tool {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #666, #333);
+            border: 2px solid #999;
+            pointer-events: none;
+            z-index: 5;
+            display: none;
+        }
+
+        .tool.visible {
+            display: block;
+        }
+
+        /* Информация */
+        .info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            text-align: center;
+            font-size: 18px;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    
+    <div class="ui-container">
+        <!-- Кнопка нагрева -->
+        <div class="heat-button" id="heatBtn">🔥</div>
+        
+        <!-- Кнопки ориентации -->
+        <div class="orientation-buttons">
+            <div class="orientation-btn active" data-orientation="horizontal">🔄</div>
+            <div class="orientation-btn" data-orientation="up">⬆️</div>
+            <div class="orientation-btn" data-orientation="down">⬇️</div>
+        </div>
+        
+        <!-- Ползунок скорости -->
+        <div class="speed-control">
+            <div class="speed-label">Скорость: <span id="speedValue">0</span> об/с</div>
+            <input type="range" class="speed-slider" id="speedSlider" min="0" max="10" value="0" step="0.5">
+        </div>
+        
+        <!-- Размер инструмента -->
+        <div class="tool-size">
+            <div class="size-btn" data-size="small">S</div>
+            <div class="size-btn active" data-size="medium">M</div>
+            <div class="size-btn" data-size="large">L</div>
+        </div>
+        
+        <!-- Индикатор температуры -->
+        <div class="temp-indicator">
+            <div class="temp-fill" id="tempFill"></div>
+        </div>
+        
+        <!-- Инструмент -->
+        <div class="tool" id="tool"></div>
+        
+        <!-- Информация -->
+        <div class="info" id="info">Нажмите и удерживайте 🔥 для нагрева</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Инициализация Three.js
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a1a);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 5);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        
+        // Освещение
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+        
+        // Физические параметры
+        const GRAVITY = 9.8;
+        const SPRING_STIFFNESS = 50;
+        const SPRING_DAMPING = 0.5;
+        const MASS = 1;
+        
+        // Параметры стекла
+        let temperature = 0.2;
+        let isHeating = false;
+        let angularVelocity = 0;
+        let orientation = 'horizontal';
+        
+        // Создание стеклянной заготовки
+        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        const vertices = geometry.attributes.position.array;
+        const vertexCount = vertices.length / 3;
+        
+        // Создание системы масс-пружин
+        class Vertex {
+            constructor(index, x, y, z) {
+                this.index = index;
+                this.originalPosition = new THREE.Vector3(x, y, z);
+                this.position = new THREE.Vector3(x, y, z);
+                this.velocity = new THREE.Vector3(0, 0, 0);
+                this.force = new THREE.Vector3(0, 0, 0);
+                this.mass = MASS;
+                this.neighbors = [];
+            }
+            
+            update(deltaTime) {
+                // Применение силы
+                const acceleration = this.force.clone().divideScalar(this.mass);
+                this.velocity.add(acceleration.multiplyScalar(deltaTime));
+                this.velocity.multiplyScalar(0.98); // Демпфирование
+                
+                // Ограничение скорости
+                if (this.velocity.length() > 5) {
+                    this.velocity.normalize().multiplyScalar(5);
+                }
+                
+                // Обновление позиции
+                this.position.add(this.velocity.clone().multiplyScalar(deltaTime));
+                
+                // Сброс силы
+                this.force.set(0, 0, 0);
+            }
+        }
+        
+        const vertexSystem = [];
+        
+        // Инициализация вершин
+        for (let i = 0; i < vertexCount; i++) {
+            const x = vertices[i * 3];
+            const y = vertices[i * 3 + 1];
+            const z = vertices[i * 3 + 2];
+            vertexSystem.push(new Vertex(i, x, y, z));
+        }
+        
+        // Создание связей между соседними вершинами
+        for (let i = 0; i < vertexCount; i++) {
+            const vertex = vertexSystem[i];
+            
+            // Поиск соседей (упрощенный алгоритм)
+            for (let j = i + 1; j < vertexCount; j++) {
+                const other = vertexSystem[j];
+                const distance = vertex.originalPosition.distanceTo(other.originalPosition);
+                
+                if (distance < 0.5) {
+                    vertex.neighbors.push({ vertex: other, restLength: distance });
+                    other.neighbors.push({ vertex: vertex, restLength: distance });
+                }
+            }
+        }
+        
+        // Создание материала с изменяемым цветом
+        const material = new THREE.MeshPhongMaterial({
+            color: 0xff0000,
+            shininess: 100,
+            transparent: true,
+            opacity: 0.8
+        });
+        
+        const glassMesh = new THREE.Mesh(geometry, material);
+        scene.add(glassMesh);
+        
+        // Трубка
+        const tubeGeometry = new THREE.CylinderGeometry(0.1, 0.1, 3);
+        const tubeMaterial = new THREE.MeshPhongMaterial({ color: 0x666666 });
+        const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
+        tube.position.y = -2;
+        scene.add(tube);
+        
+        // Инструмент
+        const toolGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+        const toolMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
+        const toolMesh = new THREE.Mesh(toolGeometry, toolMaterial);
+        toolMesh.visible = false;
+        scene.add(toolMesh);
+        
+        // Функция обновления цвета по температуре
+        function updateColorFromTemperature() {
+            const color = new THREE.Color();
+            
+            if (temperature < 0.2) {
+                color.setHSL(0, 1, 0.2); // Темно-красный
+            } else if (temperature < 0.4) {
+                color.setHSL(0, 1, 0.3 + temperature * 0.5);
+            } else if (temperature < 0.6) {
+                color.setHSL(0.1, 1, 0.4 + temperature * 0.3);
+            } else if (temperature < 0.8) {
+                color.setHSL(0.15, 1, 0.5 + temperature * 0.3);
+            } else {
+                color.setHSL(0.15, 0.5, 0.9); // Белый
+            }
+            
+            material.color = color;
+            material.emissive = color.clone().multiplyScalar(temperature * 0.5);
+            
+            // Обновление индикатора температуры
+            document.getElementById('tempFill').style.height = `${temperature * 100}%`;
+        }
+        
+        // Функция применения сил
+        function applyForces(deltaTime) {
+            const rotationAxis = new THREE.Vector3();
+            
+            switch (orientation) {
+                case 'horizontal':
+                    rotationAxis.set(0, 1, 0);
+                    break;
+                case 'up':
+                    rotationAxis.set(0, 0, 1);
+                    break;
+                case 'down':
+                    rotationAxis.set(0, 0, -1);
+                    break;
+            }
+            
+            vertexSystem.forEach(vertex => {
+                // Гравитация
+                vertex.force.y -= GRAVITY * vertex.mass * (1 - temperature * 0.8);
+                
+                // Центробежная сила
+                if (angularVelocity > 0) {
+                    const axisPoint = new THREE.Vector3(0, -2, 0);
+                    const toVertex = vertex.position.clone().sub(axisPoint);
+                    const projected = toVertex.projectOnPlane(rotationAxis);
+                    
+                    if (projected.length() > 0) {
+                        const centrifugalForce = projected.normalize()
+                            .multiplyScalar(angularVelocity * angularVelocity * projected.length() * 0.1);
+                        vertex.force.add(centrifugalForce);
+                    }
+                }
+                
+                // Силы пружин
+                vertex.neighbors.forEach(neighbor => {
+                    const direction = neighbor.vertex.position.clone().sub(vertex.position);
+                    const distance = direction.length();
+                    const displacement = distance - neighbor.restLength;
+                    
+                    if (distance > 0) {
+                        const springForce = direction.normalize()
+                            .multiplyScalar(displacement * SPRING_STIFFNESS * (1 + temperature));
+                        vertex.force.add(springForce);
+                    }
+                });
+                
+                // Ограничение деформации
+                const maxDeformation = 0.5 + temperature * 1.5;
+                const deformation = vertex.position.distanceTo(vertex.originalPosition);
+                if (deformation > maxDeformation) {
+                    const restoreForce = vertex.originalPosition.clone()
+                        .sub(vertex.position)
+                        .normalize()
+                        .multiplyScalar((deformation - maxDeformation) * 10);
+                    vertex.force.add(restoreForce);
+                }
+            });
+        }
+        
+        // Функция взаимодействия с инструментом
+        function checkToolInteraction() {
+            if (!toolMesh.visible) return;
+            
+            const toolRadius = toolMesh.scale.x * 0.3;
+            const influenceRadius = toolRadius * 2;
+            
+            vertexSystem.forEach(vertex => {
+                const distance = vertex.position.distanceTo(toolMesh.position);
+                
+                if (distance < influenceRadius) {
+                    const influence = 1 - (distance / influenceRadius);
+                    const pushStrength = influence * temperature * 0.1;
+                    
+                    const pushDirection = vertex.position.clone()
+                        .sub(toolMesh.position)
+                        .normalize();
+                    
+                    vertex.force.add(pushDirection.multiplyScalar(pushStrength));
+                }
+            });
+        }
+        
+        // Управление сенсорным интерфейсом
+        let isDraggingTool = false;
+        let toolSize = 'medium';
+        
+        const toolElement = document.getElementById('tool');
+        const heatBtn = document.getElementById('heatBtn');
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const info = document.getElementById('info');
+        
+        // События для кнопки нагрева
+        heatBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isHeating = true;
+            heatBtn.classList.add('heating');
+            info.style.opacity = '0';
+        });
+        
+        heatBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isHeating = false;
+            heatBtn.classList.remove('heating');
+        });
+        
+        // События для кнопок ориентации
+        document.querySelectorAll('.orientation-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.orientation-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                orientation = btn.dataset.orientation;
+                
+                // Плавное вращение трубки
+                const targetRotation = new THREE.Quaternion();
+                switch (orientation) {
+                    case 'horizontal':
+                        targetRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0);
+                        break;
+                    case 'up':
+                        targetRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
+                        break;
+                    case 'down':
+                        targetRotation.setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
+                        break;
+                }
+                
+                // Анимация вращения
+                const startRotation = tube.quaternion.clone();
+                let progress = 0;
+                
+                function animateRotation() {
+                    progress += 0.05;
+                    if (progress <= 1) {
+                        tube.quaternion.slerpQuaternions(startRotation, targetRotation, progress);
+                        requestAnimationFrame(animateRotation);
+                    }
+                }
+                animateRotation();
+            });
+        });
+        
+        // События для размера инструмента
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                toolSize = btn.dataset.size;
+                
+                switch (toolSize) {
+                    case 'small':
+                        toolMesh.scale.set(0.5, 0.5, 0.5);
+                        break;
+                    case 'medium':
+                        toolMesh.scale.set(1, 1, 1);
+                        break;
+                    case 'large':
+                        toolMesh.scale.set(1.5, 1.5, 1.5);
+                        break;
+                }
+            });
+        });
+        
+        // События для ползунка скорости
+        speedSlider.addEventListener('input', (e) => {
+            angularVelocity = parseFloat(e.target.value);
+            speedValue.textContent = angularVelocity;
+        });
+        
+        // Сенсорное управление инструментом
+        renderer.domElement.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const rect = renderer.domElement.getBoundingClientRect();
+            
+            // Проверка, касается ли палец инструмента
+            const mouse = new THREE.Vector2(
+                ((touch.clientX - rect.left) / rect.width) * 2 - 1,
+                -((touch.clientY - rect.top) / rect.height) * 2 + 1
+            );
+            
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+            
+            const intersects = raycaster.intersectObject(toolMesh);
+            
+            if (intersects.length > 0) {
+                isDraggingTool = true;
+                toolMesh.visible = true;
+                toolElement.classList.add('visible');
+            }
+        });
+        
+        renderer.domElement.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            
+            if (isDraggingTool) {
+                const touch = e.touches[0];
+                const rect = renderer.domElement.getBoundingClientRect();
+                
+                // Проекция на плоскость камеры
+                const mouse = new THREE.Vector2(
+                    ((touch.clientX - rect.left) / rect.width) * 2 - 1,
+                    -((touch.clientY - rect.top) / rect.height) * 2 + 1
+                );
+                
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(mouse, camera);
+                
+                // Перемещение инструмента в 3D пространстве
+                const distance = 3;
+                const position = raycaster.ray.origin.clone()
+                    .add(raycaster.ray.direction.clone().multiplyScalar(distance));
+                
+                toolMesh.position.copy(position);
+                
+                // Обновление позиции 2D индикатора
+                toolElement.style.left = `${touch.clientX - 30}px`;
+                toolElement.style.top = `${touch.clientY - 30}px`;
+            }
+        });
+        
+        renderer.domElement.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isDraggingTool = false;
+            toolMesh.visible = false;
+            toolElement.classList.remove('visible');
+        });
+        
+        // Основной цикл анимации
+        let lastTime = 0;
+        
+        function animate(currentTime) {
+            requestAnimationFrame(animate);
+            
+            const deltaTime = (currentTime - lastTime) / 1000;
+            lastTime = currentTime;
+            
+            if (deltaTime > 0.1) return; // Предотвращение больших скачков времени
+            
+            // Обновление температуры
+            if (isHeating) {
+                temperature = Math.min(1, temperature + deltaTime * 0.5);
+            } else {
+                temperature = Math.max(0.2, temperature - deltaTime * 0.1);
+            }
+            
+            updateColorFromTemperature();
+            
+            // Вращение стекла
+            if (angularVelocity > 0) {
+                glassMesh.rotation.y += angularVelocity * deltaTime;
+            }
+            
+            // Физическое обновление
+            applyForces(deltaTime);
+            checkToolInteraction();
+            
+            // Обновление вершин
+            vertexSystem.forEach(vertex => {
+                vertex.update(deltaTime);
+                
+                // Обновление геометрии
+                vertices[vertex.index * 3] = vertex.position.x;
+                vertices[vertex.index * 3 + 1] = vertex.position.y;
+                vertices[vertex.index * 3 + 2] = vertex.position.z;
+            });
+            
+            geometry.attributes.position.needsUpdate = true;
+            geometry.computeVertexNormals();
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Обработка изменения размера окна
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // Запуск анимации
+        animate(0);
+        
+        // Скрытие информации через 5 секунд
+        setTimeout(() => {
+            info.style.opacity = '0';
+        }, 5000);
+    </script>
+</body>
+</html>

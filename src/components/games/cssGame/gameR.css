@@ -1,0 +1,42 @@
+
+    #menu {
+            text-align: center;
+        }
+
+        #menu h1 {
+            color: #333;
+        }
+        #menu button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #menu button:hover {
+            background-color: #45a049;
+        }
+        #gameContainer{
+            margin-top: 0px;
+            text-align: center;
+        }
+        #puzzleR {
+            display: grid;
+            gap: 2px;
+            margin: 5px auto;
+            justify-content: center;
+        }
+        .piece {
+            display: block;
+            cursor: pointer;
+            background-color: #fff;
+            transition: transform 0.2s;
+            overflow: hidden;
+        }
+        .piese bord{
+            border: 1px solid #ccc;
+        }
+

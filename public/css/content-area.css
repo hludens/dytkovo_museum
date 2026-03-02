@@ -1,0 +1,140 @@
+.main-content {
+  padding: 0.5rem 3rem  0.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 1;
+  position: relative;
+}
+
+.section-title {
+  text-align: center;
+}
+
+.section-title h1 {
+  font-size: 3rem;
+  color: #212121;
+}
+
+.section-title h2 {
+  font-size: 2rem;
+  color: #616161;
+  margin-top: 0.5rem;
+}
+
+.content-full {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 2rem;
+}
+
+.full-width {
+  width: 100%;
+   max-height: 80vh; /* Ограничение высоты */
+  object-fit: contain; /* Сохранение пропорций */
+  height: auto;
+  display: block;
+  border-radius: 1rem;
+  
+}
+.full-width-video {
+  margin: 0 auto;
+  max-height: 80vh; /* Ограничение высоты */
+  object-fit: contain; /* Сохранение пропорций */
+  height: auto;
+  display: block;
+  border-radius: 1rem;
+  
+}
+
+.content-full img,
+.content-full video {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.text-only p {
+  font-size: 1.5rem;
+  line-height: 1.8;
+  color: #424242;
+}
+
+.content-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
+  text-align: center;
+   max-height: 90vh; /* Ограничение высоты контента */
+  overflow: auto; /* Если контент все же выйдет за пределы */
+}
+
+.content-horizontal {
+  display: flex;
+  align-items: stretch;
+  gap: 2rem;
+  padding: 2rem;
+  flex-wrap: wrap;
+   max-height: 90vh; /* Ограничение высоты контента */
+  overflow: auto; /* Если контент все же выйдет за пределы */
+}
+
+.content-horizontal .image-col {
+  flex: 1 1 40%;
+  min-width: 250px;
+}
+
+.content-horizontal .image-col img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
+   max-height: 80vh; /* Ограничение высоты */
+  object-fit: contain; /* Сохранение пропорций */
+}
+
+.content-horizontal .text-col {
+  flex: 1 1 60%;
+  min-width: 300px;
+  display: flex;
+  align-items: center;
+  max-width: 90vh; 
+}
+
+.content-grid-3,
+.card.content-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 2rem;
+  align-items: start;
+}
+
+.image-col,
+.text-col,
+.media-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content-grid-3 .image-col img,
+.content-grid-3 .media-col video,
+.content-grid-3 .media-col .slideshow-section {
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+.content-grid-3 .media-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* чтобы точки были внизу */
+  height: 100%;
+}

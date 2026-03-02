@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О музее - Музей Дятьковского хрусталя</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            animation: backgroundShift 20s ease infinite;
+        }
+        @keyframes backgroundShift {
+            0% { background: linear-gradient(135deg, #f5f7fa 0%, #e4eaf5 100%); }
+            25% { background: linear-gradient(135deg, #e6f7ff 0%, #f0f5ff 100%); }
+            50% { background: linear-gradient(135deg, #f0f4ff 0%, #e6f2ff 100%); }
+            75% { background: linear-gradient(135deg, #eef5ff 0%, #f0f7ff 100%); }
+            100% { background: linear-gradient(135deg, #f5f7fa 0%, #e4eaf5 100%); }
+        }
+        .slide-container {
+            width: 720px;
+            min-height: 960px;
+            margin: 0 auto;
+            position: relative;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: linear-gradient(90deg, rgba(58, 83, 155, 0.9) 0%, rgba(58, 83, 155, 0.7) 100%);
+            color: white;
+            padding: 15px 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(45deg);
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+            z-index: 1;
+        }
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        .logo i {
+            font-size: 24px;
+            color: white;
+        }
+        .header-text h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .header-text p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .nav-menu {
+            display: flex;
+            background: rgba(58, 83, 155, 0.05);
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(58, 83, 155, 0.2);
+            position: relative;
+        }
+        .nav-menu::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(58, 83, 155, 0.3) 20%, 
+                rgba(58, 83, 155, 0.7) 50%, 
+                rgba(58, 83, 155, 0.3) 80%, 
+                transparent 100%);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+        .nav-items {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .nav-item {
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #3a539b;
+            cursor: pointer;
+            position: relative;
+            text-align: center;
+        }
+        .nav-item.active {
+            color: #3a539b;
+            font-weight: 600;
+        }
+        .nav-item.active::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(58, 83, 155, 0.5) 20%, 
+                rgba(58, 83, 155, 0.9) 50%, 
+                rgba(58, 83, 155, 0.5) 80%, 
+                transparent 100%);
+            animation: crystalGlow 2s infinite;
+        }
+        @keyframes crystalGlow {
+            0% { opacity: 0.7; box-shadow: 0 0 5px rgba(58, 83, 155, 0.5); }
+            50% { opacity: 1; box-shadow: 0 0 10px rgba(58, 83, 155, 0.8); }
+            100% { opacity: 0.7; box-shadow: 0 0 5px rgba(58, 83, 155, 0.5); }
+        }
+        .content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .museum-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .info-section {
+            margin-bottom: 20px;
+        }
+        .info-section h2 {
+            font-size: 22px;
+            color: #3a539b;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+        .info-section h2 i {
+            margin-right: 10px;
+            color: #3a539b;
+        }
+        .info-section p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        .highlight {
+            background: linear-gradient(90deg, rgba(58, 83, 155, 0.1) 0%, rgba(58, 83, 155, 0.2) 100%);
+            border-left: 4px solid #3a539b;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+        .highlight p {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            padding: 15px;
+            width: 30%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #3a539b;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+        .thumbnails-container {
+            padding: 15px;
+            background: rgba(58, 83, 155, 0.05);
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(58, 83, 155, 0.1);
+        }
+        .thumbnail {
+            width: 100px;
+            height: 80px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .thumbnail.active {
+            box-shadow: 0 0 15px rgba(58, 83, 155, 0.5);
+            transform: translateY(-5px);
+        }
+        .thumbnail-image {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+        }
+        .thumbnail-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(58, 83, 155, 0.8);
+            color: white;
+            padding: 3px;
+            font-size: 10px;
+            text-align: center;
+        }
+        .crystal-effect {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            top: -50px;
+            right: -50px;
+            z-index: 0;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="header">
+            <div class="crystal-effect"></div>
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <div class="header-text">
+                    <h1>Музей Дятьковского хрусталя</h1>
+                    <p>Интерактивная панель</p>
+                </div>
+            </div>
+            <div class="logo">
+                <i class="fas fa-cog"></i>
+            </div>
+        </div>
+        
+        <div class="nav-menu">
+            <div class="nav-items">
+                <div class="nav-item active">О музее</div>
+                <div class="nav-item">О заводе</div>
+                <div class="nav-item">Технология хрусталя</div>
+                <div class="nav-item">Художники по хрусталю</div>
+                <div class="nav-item">Музей-детям</div>
+                <div class="nav-item">Интерактивные игры</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <img src="https://sfile.chatglm.cn/images-ppt/dcf8bcf6c375.jpg" alt="Музей Дятьковского хрусталя" class="museum-image">
+            
+            <div class="info-section">
+                <h2><i class="fas fa-history"></i>История музея</h2>
+                <p>Основан в 1790 году одновременно с Дятьковским хрустальным заводом как образцовая комната при заводе.</p>
+                <p>С 1976 года музей располагается в современном двухэтажном здании, доступном для всех посетителей.</p>
+            </div>
+            
+            <div class="highlight">
+                <p>Музей является крупнейшим в России и одним из крупнейших в мире музеев хрусталя!</p>
+            </div>
+            
+            <div class="info-section">
+                <h2><i class="fas fa-th-large"></i>Коллекция музея</h2>
+                <p>В музейное собрание входят уникальные предметы декоративного убранства интерьеров, подарки известным персонам, изделия из хрусталя, цветного и бесцветного стекла различных методов выработки и декора XIX-XXI веков.</p>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">12 000+</div>
+                    <div class="stat-label">единиц хранения</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">3 000</div>
+                    <div class="stat-label">экспонатов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1 800</div>
+                    <div class="stat-label">м² площадь</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="thumbnails-container">
+            <div class="thumbnail active">
+                <img src="https://sfile.chatglm.cn/images-ppt/dcf8bcf6c375.jpg" alt="О музее" class="thumbnail-image">
+                <div class="thumbnail-title">О музее</div>
+            </div>
+            <div class="thumbnail">
+                <img src="https://sfile.chatglm.cn/images-ppt/772244a21032.jpg" alt="О заводе" class="thumbnail-image">
+                <div class="thumbnail-title">О заводе</div>
+            </div>
+            <div class="thumbnail">
+                <img src="https://sfile.chatglm.cn/images-ppt/e8614eab58b5.jpg" alt="Технология хрусталя" class="thumbnail-image">
+                <div class="thumbnail-title">Технология</div>
+            </div>
+            <div class="thumbnail">
+                <img src="https://sfile.chatglm.cn/images-ppt/adf5fba7edd1.jpg" alt="Художники" class="thumbnail-image">
+                <div class="thumbnail-title">Художники</div>
+            </div>
+            <div class="thumbnail">
+                <img src="https://sfile.chatglm.cn/images-ppt/6d0aa6f1dfbc.jpg" alt="Музей-детям" class="thumbnail-image">
+                <div class="thumbnail-title">Детям</div>
+            </div>
+            <div class="thumbnail">
+                <img src="https://sfile.chatglm.cn/images-ppt/3d7ce0f91a56.jpg" alt="Игры" class="thumbnail-image">
+                <div class="thumbnail-title">Игры</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

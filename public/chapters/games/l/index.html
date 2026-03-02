@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стеклодув - Glass Blowing Simulation</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: white;
+        }
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+        button {
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid #fff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        #timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 20px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #tool-container {
+            display: flex;
+            gap: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .tool {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+        }
+        .tool.selected {
+            background: rgba(255,255,255,0.5);
+            border: 2px solid orange;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="timer">Time: 180s</div>
+        <div id="controls">
+            <div id="tool-container">
+                <div class="tool selected" data-shape="sharp">尖</div>
+                <div class="tool" data-shape="round">○</div>
+                <div class="tool" data-shape="wide">▭</div>
+            </div>
+            <button id="blow-button">Подать воздух</button>
+            <button id="rotate-up">Вертикально вверх</button>
+            <button id="rotate-horizontal">Горизонтально</button>
+            <button id="rotate-down">Вертикально вниз</button>
+            <button id="speed-up">Увеличить скорость</button>
+            <button id="speed-down">Уменьшить скорость</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // Инициализация Three.js
+        const container = document.getElementById('container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x111111);
+        container.appendChild(renderer.domElement);
+
+        // Освещение
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(1, 1, 1);
+        scene.add(directionalLight);
+        const pointLight = new THREE.PointLight(0xffaa00, 1, 100);
+        pointLight.position.set(0, 5, 5);
+        scene.add(pointLight);
+
+        // Камера смотрит в центр
+        camera.position.set(0, 5, 0);
+
+        // Создание шумовой текстуры
+        function generateNoiseTexture() {
+            const size = 256;
+            const data = new Uint8Array(size * size * 4);
+            for (let i = 0; i < size * size; i++) {
+                const value = Math.random() * 255;
+                data[i * 4] = value;
+                data[i * 4 + 1] = value;
+                data[i * 4 + 2] = value;
+                data[i * 4 + 3] = 255;
+            }
+            const texture = new THREE.DataTexture(data, size, size, THREE.RGBAFormat);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        const noiseTexture = generateNoiseTexture();
+
+        // Стеклодувная система (трубка + стекло)
+        const glassSystem = new THREE.Group();
+        scene.add(glassSystem);
+
+        // Стеклодувная трубка
+        const tubeGeometry = new THREE.CylinderGeometry(0.05, 0.05, 4, 16);
+        const tubeMaterial = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.7, roughness: 0.2 });
+        const tube = new THREE.Mesh(tubeGeometry, tubeMaterial);
+        tube.position.z = 2; // Трубка выходит из центра к краю
+        tube.rotation.set(-Math.PI / 2, 0,0);
+        glassSystem.add(tube);
+
+        // Материал раскаленного стекла с шумом
+        const glassMaterial = new THREE.MeshStandardMaterial({
+            color: 0xff3300,
+            emissive: 0xff8800,
+            emissiveIntensity: 0.8,
+            metalness: 0.3,
+            roughness: 0.1,
+            transparent: true,
+            opacity: 0.9,
+            map: noiseTexture,
+            emissiveMap: noiseTexture
+        });
+
+        const glassMaterialOuter = new THREE.MeshStandardMaterial({
+            color: 0xffaa00,
+            emissive: 0xffcc00,
+            emissiveIntensity: 0.6,
+            metalness: 0.4,
+            roughness: 0.05,
+            transparent: true,
+            opacity: 0.7,
+            map: noiseTexture
+        });
+
+        // Создание двухслойной сферы - раскаленного стекла
+        const glassInnerGeometry = new THREE.SphereGeometry(0.5, 64, 64);
+        const glassOuterGeometry = new THREE.SphereGeometry(0.55, 64, 64);
+        const glassInner = new THREE.Mesh(glassInnerGeometry, glassMaterial);
+        const glassOuter = new THREE.Mesh(glassOuterGeometry, glassMaterialOuter);
+        
+        glassSystem.add(glassInner);
+        glassSystem.add(glassOuter);
+
+        // Управление камерой
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enablePan = false;
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.rotateSpeed = 0.5;
+        
+        // Отключаем правую кнопку мыши для вращения
+        controls.mouseButtons = {
+            LEFT: null,
+            MIDDLE: THREE.MOUSE.ROTATE,
+            RIGHT: null
+        };
+
+        // Инструменты
+        const tools = [];
+        const toolData = [
+            { type: 'sharp', size: 0.3, shape: 'cone' },
+            { type: 'round', size: 0.6, shape: 'sphere' },
+            { type: 'wide', size: 1.0, shape: 'box' }
+        ];
+
+        toolData.forEach(data => {
+            let geometry, material;
+            switch(data.shape) {
+                case 'cone':
+                    geometry = new THREE.ConeGeometry(data.size, data.size * 2, 16);
+                    break;
+                case 'sphere':
+                    geometry = new THREE.SphereGeometry(data.size, 16, 16);
+                    break;
+                case 'box':
+                    geometry = new THREE.BoxGeometry(data.size, data.size, data.size * 2);
+                    break;
+            }
+            material = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.5, roughness: 0.3 });
+            const tool = new THREE.Mesh(geometry, material);
+            tool.visible = false;
+            tool.userData = { type: data.type };
+            tool.position.set(0, 0, 2);
+            scene.add(tool);
+            tools.push(tool);
+        });
+
+        let selectedTool = tools[0];
+        selectedTool.visible = true;
+        let isToolActive = false;
+
+        // Управление инструментами
+        document.querySelectorAll('.tool').forEach(el => {
+            el.addEventListener('click', () => {
+                document.querySelectorAll('.tool').forEach(t => t.classList.remove('selected'));
+                el.classList.add('selected');
+                const shape = el.getAttribute('data-shape');
+                tools.forEach(tool => {
+                    tool.visible = false;
+                });
+                switch(shape) {
+                    case 'sharp': selectedTool = tools[0]; break;
+                    case 'round': selectedTool = tools[1]; break;
+                    case 'wide': selectedTool = tools[2]; break;
+                }
+                selectedTool.visible = true;
+            });
+        });
+
+        // Переменные состояния
+        let tubeAngle = -Math.PI / 2; // горизонтально
+        let targetTubeAngle = tubeAngle;
+        let rotationSpeed = 0.005;
+        let coolingTime = 180; // 3 минуты
+        let isBlowing = false;
+        let gravityFactor = 0.0005;
+        let isMouseDown = false;
+        let mouse = new THREE.Vector2();
+        let raycaster = new THREE.Raycaster();
+        let hasCooled = false;
+
+        // Обновление таймера
+        const timerDisplay = document.getElementById('timer');
+        const timerInterval = setInterval(() => {
+            coolingTime -= 1;
+            timerDisplay.textContent = `Time: ${coolingTime}s`;
+            if (coolingTime <= 0 && !hasCooled) {
+                // Остывание стекла - становится прозрачным синим
+                glassMaterial.color.set(0x0088ff);
+                glassMaterial.emissive.set(0x002244);
+                glassMaterial.emissiveIntensity = 0.1;
+                glassMaterial.metalness = 0.1;
+                glassMaterial.roughness = 0.0;
+                glassMaterial.opacity = 0.8;
+                
+                glassMaterialOuter.color.set(0x00aaff);
+                glassMaterialOuter.emissive.set(0x003366);
+                glassMaterialOuter.emissiveIntensity = 0.05;
+                glassMaterialOuter.metalness = 0.2;
+                glassMaterialOuter.roughness = 0.0;
+                glassMaterialOuter.opacity = 0.6;
+                
+                hasCooled = true;
+            }
+        }, 1000);
+
+        // Обработчики кнопок
+        document.getElementById('blow-button').addEventListener('click', () => {
+            isBlowing = true;
+            setTimeout(() => { isBlowing = false; }, 300);
+        });
+
+        document.getElementById('rotate-up').addEventListener('click', () => {
+            targetTubeAngle = 0;
+        });
+
+        document.getElementById('rotate-horizontal').addEventListener('click', () => {
+            targetTubeAngle = -Math.PI / 2;
+        });
+
+        document.getElementById('rotate-down').addEventListener('click', () => {
+            targetTubeAngle = -Math.PI ;
+        });
+
+        document.getElementById('speed-up').addEventListener('click', () => {
+            rotationSpeed = Math.min(rotationSpeed + 0.002, 0.02);
+        });
+
+        document.getElementById('speed-down').addEventListener('click', () => {
+            rotationSpeed = Math.max(rotationSpeed - 0.002, 0.001);
+        });
+
+        // Управление мышью для перемещения инструмента
+        renderer.domElement.addEventListener('mousedown', (event) => {
+            if (event.button === 0) { // Только левая кнопка
+                isMouseDown = true;
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                isToolActive = true;
+                controls.enabled = false;
+            }
+        });
+
+        renderer.domElement.addEventListener('mouseup', (event) => {
+            if (event.button === 0) {
+                isMouseDown = false;
+                isToolActive = false;
+                controls.enabled = true;
+            }
+        });
+
+        renderer.domElement.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            if (isMouseDown) {
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObject(glassSystem);
+                
+                if (intersects.length > 0) {
+                    selectedTool.position.copy(intersects[0].point);
+                    selectedTool.position.add(intersects[0].face.normal.multiplyScalar(0.1));
+                }
+            }
+        });
+
+        // Основной цикл анимации
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Плавное изменение угла трубки
+            if (Math.abs(targetTubeAngle - tubeAngle) > 0.01) {
+                tubeAngle += (targetTubeAngle - tubeAngle) * 0.05;
+                glassSystem.rotation.y = tubeAngle;
+            } else {
+                tubeAngle = targetTubeAngle;
+                glassSystem.rotation.y = tubeAngle;
+            }
+
+            // Вращение стекла вокруг оси трубки
+            glassInner.rotation.z += rotationSpeed;
+            glassOuter.rotation.z += rotationSpeed;
+            
+            // Анимация шума на поверхности
+            // glassMaterial.map.offset.x += 0.001;
+            // glassMaterial.map.offset.y += 0.0005;
+            // glassMaterial.emissiveMap.offset.x += 0.001;
+            // glassMaterial.emissiveMap.offset.y += 0.0005;
+
+            // Деформация под действием "гравитации" в зависимости от угла трубки
+            const gravityDir = new THREE.Vector3(0, -1, 0).applyAxisAngle(new THREE.Vector3(0, 0, 1), tubeAngle);
+            const scaledGravity = gravityDir.clone().multiplyScalar(gravityFactor);
+            glassInner.position.add(scaledGravity);
+            glassOuter.position.add(scaledGravity);
+
+            // Центрируем стекло (оно всегда в центре системы)
+            // glassInner.position.set(0, 0, 0);
+            // glassOuter.position.set(0, 0, 0);
+
+         const vertices = glassInnerGeometry.attributes.position.array;
+     //    const verticesOuter = glassOuterGeometry.attributes.position.array;
+ for (let i = 0; i < vertices.length; i += 3) {
+                        const x = vertices[i];
+                        const y = vertices[i+1];
+                        const z = vertices[i+2];
+                        const worldPoint = new THREE.Vector3(x, y, z).applyMatrix4(glassInner.matrixWorld);
+ }
+
+
+            // Эффект "надувания"
+            // if (isBlowing) {
+            //     glassInner.scale.multiplyScalar(1.02);
+            //     glassOuter.scale.multiplyScalar(1.02);
+            //     // Не даем слишком раздуваться
+            //     if (glassInner.scale.x > 6) {
+            //         glassInner.scale.divideScalar(1.02);
+            //         glassOuter.scale.divideScalar(1.02);
+            //     }
+            // }
+
+            // // Влияние инструмента на форму
+            // if (selectedTool.visible && isToolActive) {
+            //     const toolPos = selectedTool.getWorldPosition(new THREE.Vector3());
+            //     const glassPos = glassSystem.getWorldPosition(new THREE.Vector3());
+            //     const distance = toolPos.distanceTo(glassPos);
+                
+            //     if (distance < 1.5) {
+            //         // Деформация в зависимости от типа инструмента
+            //         const influence = 1 - distance / 1.5;
+            //         const vertices = glassInnerGeometry.attributes.position.array;
+            //         const verticesOuter = glassOuterGeometry.attributes.position.array;
+                    
+            //         for (let i = 0; i < vertices.length; i += 3) {
+            //             const x = vertices[i];
+            //             const y = vertices[i+1];
+            //             const z = vertices[i+2];
+            //             const worldPoint = new THREE.Vector3(x, y, z).applyMatrix4(glassInner.matrixWorld);
+            //             const distToTool = worldPoint.distanceTo(toolPos);
+                        
+            //             if (distToTool < 1.0) {
+            //                 const deformFactor = (1 - distToTool) * influence * 0.3;
+            //                 let deformDir = new THREE.Vector3(x, y, z).normalize();
+                            
+            //                 // В зависимости от типа инструмента
+            //                 if (selectedTool.userData.type === 'sharp') {
+            //                     // Острый - вдавливает
+            //                     deformDir.multiplyScalar(-deformFactor);
+            //                 } else if (selectedTool.userData.type === 'round') {
+            //                     // Полукруглый - выталкивает
+            //                     deformDir.multiplyScalar(deformFactor);
+            //                 } else if (selectedTool.userData.type === 'wide') {
+            //                     // Широкий - сильное выталкивание
+            //                     deformDir.multiplyScalar(deformFactor * 2);
+            //                 }
+                            
+            //                 vertices[i] += deformDir.x;
+            //                 vertices[i+1] += deformDir.y;
+            //                 vertices[i+2] += deformDir.z;
+                            
+            //                 verticesOuter[i] += deformDir.x;
+            //                 verticesOuter[i+1] += deformDir.y;
+            //                 verticesOuter[i+2] += deformDir.z;
+            //             }
+            //         }
+                    
+            //         glassInnerGeometry.attributes.position.needsUpdate = true;
+            //         glassOuterGeometry.attributes.position.needsUpdate = true;
+            //     }
+            // }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // Обработка изменения размера окна
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>

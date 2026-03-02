@@ -1,0 +1,90 @@
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.puzzle-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#puzzleS {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    background-color: #f0f0f0;
+}
+
+.tile {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background-size: 600px 600px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+/* Расположение плиток */
+.tile:nth-child(1) { top: 0px; left: 0px; }
+.tile:nth-child(2) { top: 0px; left: 150px; }
+.tile:nth-child(3) { top: 0px; left: 300px; }
+.tile:nth-child(4) { top: 0px; left: 450px; }
+
+.tile:nth-child(5) { top: 150px; left: 0px; }
+.tile:nth-child(6) { top: 150px; left: 150px; }
+.tile:nth-child(7) { top: 150px; left: 300px; }
+.tile:nth-child(8) { top: 150px; left: 450px; }
+
+.tile:nth-child(9) { top: 300px; left: 0px; }
+.tile:nth-child(10) { top: 300px; left: 150px; }
+.tile:nth-child(11) { top: 300px; left: 300px; }
+.tile:nth-child(12) { top: 300px; left: 450px; }
+
+.tile:nth-child(13) { top: 450px; left: 0px; }
+.tile:nth-child(14) { top: 450px; left: 150px; }
+.tile:nth-child(15) { top: 450px; left: 300px; }
+.tile:nth-child(16) { top: 450px; left: 450px; }
+
+/* Стили для стрелок */
+.column-arrows {
+    display: flex;
+    gap: 150px;
+    justify-content: center;
+    width: 600px;
+}
+
+.row-arrows {
+    display: flex;
+    flex-direction: column;
+    gap: 150px;
+    height: 600px;
+    justify-content: center;
+}
+
+.arrow-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    border: 2px solid #333;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.arrow-btn:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.1);
+}
+
+.arrow-btn:active {
+    transform: scale(0.95);
+}
+

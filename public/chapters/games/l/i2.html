@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>3D Glass Blowing Simulator</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      touch-action: none;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      display: block;
+    }
+    #ui {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .btn {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+    }
+    #fireBtn {
+      bottom: 20px;
+      left: 20px;
+    }
+    #axisHorizontal {
+      top: 20px;
+      left: 20px;
+    }
+    #axisUp {
+      top: 20px;
+      left: 90px;
+    }
+    #axisDown {
+      top: 20px;
+      left: 160px;
+    }
+    #speedControl {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 150px;
+      pointer-events: auto;
+    }
+    #toolSize {
+      position: absolute;
+      bottom: 80px;
+      right: 20px;
+      pointer-events: auto;
+    }
+    .tool-btn {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      margin: 0 5px;
+      background: #333;
+      color: white;
+      text-align: center;
+      line-height: 40px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <button id="fireBtn" class="btn">🔥</button>
+    <button id="axisHorizontal" class="btn">🔄</button>
+    <button id="axisUp" class="btn">⬆️</button>
+    <button id="axisDown" class="btn">⬇️</button>
+    <input type="range" id="speedControl" min="0" max="10" value="3" step="0.1" />
+    <div id="toolSize">
+      <span class="tool-btn" data-size="0.5">S</span>
+      <span class="tool-btn" data-size="1">M</span>
+      <span class="tool-btn" data-size="1.5">L</span>
+    </div>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+  <script type="module">
+
+
+    // === GLOBAL VARIABLES ===
+    let scene, camera, renderer, controls;
+    let glassMesh, toolMesh;
+    let rotationAxis = new THREE.Object3D();
+    let angularVelocity = 3; // rad/s
+    let targetAxisQuat = new THREE.Quaternion();
+    let temperature = 1.0;
+    let isHeating = false;
+    let toolSize = 1.0;
+    let vertices = [];
+    let springs = [];
+    let raycaster = new THREE.Raycaster();
+    let mouse = new THREE.Vector2();
+    let touchId = null;
+    let toolActive = false;
+
+    // Physics constants
+    const GRAVITY = 0.98;
+    const SPRING_STIFFNESS = 0.3;
+    const DAMPING = 0.92;
+    const COOLDOWN_RATE = 0.001;
+    const HEAT_RATE = 0.002;
+    const MIN_TEMP = 0.2;
+    const MAX_TEMP = 1.0;
+
+    // Init
+    function init() {
+      // Scene
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x111111);
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 1, 5);
+      camera.lookAt(0, 1, 0);
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      document.body.appendChild(renderer.domElement);
+
+      // Controls (for dev only; disable on mobile)
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enablePan = false;
+      controls.enableZoom = false;
+      controls.rotateSpeed = 0.5;
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0x404040);
+      scene.add(ambientLight);
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(5, 5, 5);
+      scene.add(directionalLight);
+
+      // Create glass blob (soft body sphere)
+      createGlassBlob();
+
+      // Create tool
+      toolMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.3 })
+      );
+      toolMesh.position.set(2, 1, 0);
+      scene.add(toolMesh);
+
+      // Add rotation axis (invisible parent)
+      rotationAxis.position.set(0, 1, 0);
+      scene.add(rotationAxis);
+      rotationAxis.add(glassMesh);
+
+      // Set initial axis orientation
+      targetAxisQuat.identity();
+      rotationAxis.quaternion.copy(targetAxisQuat);
+
+      // Event Listeners
+      window.addEventListener('resize', onWindowResize);
+      document.getElementById('fireBtn').addEventListener('touchstart', () => isHeating = true);
+      document.getElementById('fireBtn').addEventListener('touchend', () => isHeating = false);
+      document.getElementById('fireBtn').addEventListener('mousedown', () => isHeating = true);
+      document.getElementById('fireBtn').addEventListener('mouseup', () => isHeating = false);
+
+      document.getElementById('axisHorizontal').addEventListener('click', () => setAxisOrientation(0));
+      document.getElementById('axisUp').addEventListener('click', () => setAxisOrientation(Math.PI / 2));
+      document.getElementById('axisDown').addEventListener('click', () => setAxisOrientation(-Math.PI / 2));
+
+      document.getElementById('speedControl').addEventListener('input', (e) => {
+        angularVelocity = parseFloat(e.target.value);
+      });
+
+      document.querySelectorAll('.tool-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          toolSize = parseFloat(btn.dataset.size);
+          toolMesh.scale.set(toolSize, toolSize, toolSize);
+        });
+      });
+
+      // Touch events for tool
+      renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+      renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+      renderer.domElement.addEventListener('touchend', onTouchEnd, { passive: false });
+
+      // Start animation loop
+      animate();
+    }
+
+    function createGlassBlob() {
+      const geometry = new THREE.SphereGeometry(0.8, 32, 32);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xff3300,
+        metalness: 0.1,
+        roughness: 0.3,
+        emissive: 0x330000,
+        flatShading: false
+      });
+      glassMesh = new THREE.Mesh(geometry, material);
+      glassMesh.castShadow = true;
+
+      // Convert geometry to soft body
+      vertices = [];
+      const posAttr = geometry.attributes.position;
+      for (let i = 0; i < posAttr.count; i++) {
+        const p = new THREE.Vector3(
+          posAttr.getX(i),
+          posAttr.getY(i),
+          posAttr.getZ(i)
+        ).multiplyScalar(0.8);
+        vertices.push({
+          original: p.clone(),
+          position: p.clone(),
+          velocity: new THREE.Vector3(),
+          mass: 1.0
+        });
+      }
+
+      // Create spring connections (simplified: connect to neighbors)
+      springs = [];
+      const threshold = 0.3;
+      for (let i = 0; i < vertices.length; i++) {
+        for (let j = i + 1; j < vertices.length; j++) {
+          if (vertices[i].original.distanceTo(vertices[j].original) < threshold) {
+            springs.push({ i, j, restLength: vertices[i].original.distanceTo(vertices[j].original) });
+          }
+        }
+      }
+
+      // Update geometry on render
+      glassMesh.geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(vertices.length * 3);
+      glassMesh.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      glassMesh.geometry.computeVertexNormals();
+    }
+
+    function updateGlassGeometry() {
+      const posAttr = glassMesh.geometry.attributes.position;
+      for (let i = 0; i < vertices.length; i++) {
+        posAttr.setXYZ(i, vertices[i].position.x, vertices[i].position.y, vertices[i].position.z);
+      }
+      posAttr.needsUpdate = true;
+      glassMesh.geometry.computeVertexNormals();
+    }
+
+    function updateTemperatureColor() {
+      const t = temperature;
+      let color;
+      if (t < 0.25) color = new THREE.Color(0x330000);
+      else if (t < 0.5) color = new THREE.Color(0x882200);
+      else if (t < 0.75) color = new THREE.Color(0xff4400);
+      else if (t < 0.9) color = new THREE.Color(0xffaa00);
+      else color = new THREE.Color(0xffffff);
+
+      const emissive = color.clone().multiplyScalar(t * 0.5);
+      glassMesh.material.color.copy(color);
+      glassMesh.material.emissive.copy(emissive);
+    }
+
+    function applyForces(deltaTime) {
+      const axisDir = new THREE.Vector3(0, 1, 0);
+      rotationAxis.getWorldDirection(axisDir);
+      const omegaSq = angularVelocity * angularVelocity;
+
+      // Reset forces
+      vertices.forEach(v => {
+        v.velocity.multiplyScalar(DAMPING);
+        const gravity = new THREE.Vector3(0, -GRAVITY * deltaTime, 0);
+        v.velocity.add(gravity);
+      });
+
+      // Centrifugal force
+      vertices.forEach(v => {
+        const toAxis = v.position.clone().projectOnPlane(axisDir);
+        const radius = toAxis.length();
+        if (radius > 0.01) {
+          const centrifugal = toAxis.normalize().multiplyScalar(omegaSq * radius * deltaTime);
+          v.velocity.add(centrifugal);
+        }
+      });
+
+      // Springs
+      springs.forEach(s => {
+        const a = vertices[s.i];
+        const b = vertices[s.j];
+        const diff = b.position.clone().sub(a.position);
+        const dist = diff.length();
+        const force = (dist - s.restLength) * SPRING_STIFFNESS;
+        const impulse = diff.normalize().multiplyScalar(force * deltaTime);
+        if (!a.fixed) b.velocity.sub(impulse);
+        if (!b.fixed) a.velocity.add(impulse);
+      });
+
+      // Tool interaction
+      const toolWorldPos = toolMesh.getWorldPosition(new THREE.Vector3());
+      vertices.forEach(v => {
+        const localPos = v.position;
+        const dist = localPos.distanceTo(toolWorldPos);
+        if (dist < toolMesh.scale.x * 0.8) {
+          const pushDir = localPos.clone().sub(toolWorldPos).normalize();
+          const strength = (1.0 - dist / (toolMesh.scale.x * 0.8)) * 0.05 * temperature * deltaTime * 60;
+          v.velocity.add(pushDir.multiplyScalar(strength));
+        }
+      });
+
+      // Update positions
+      vertices.forEach(v => {
+        v.position.add(v.velocity);
+      });
+    }
+
+    function setAxisOrientation(angleY) {
+      const quat = new THREE.Quaternion();
+      quat.setFromAxisAngle(new THREE.Vector3(0, 0, 1), angleY);
+      targetAxisQuat.copy(quat);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      const clock = new THREE.Clock();
+      function loop() {
+        const deltaTime = clock.getDelta();
+
+        // Rotate toward target orientation
+        rotationAxis.quaternion.slerp(targetAxisQuat, 0.1);
+
+        // Update temperature
+        if (isHeating && temperature < MAX_TEMP) {
+          temperature += HEAT_RATE * deltaTime * 60;
+        } else if (temperature > MIN_TEMP) {
+          temperature -= COOLDOWN_RATE * deltaTime * 60;
+        }
+        temperature = Math.max(MIN_TEMP, Math.min(MAX_TEMP, temperature));
+        updateTemperatureColor();
+
+        // Physics step
+        applyForces(deltaTime);
+        updateGlassGeometry();
+
+        // Render
+        renderer.render(scene, camera);
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    // Touch handling
+    function screenToRay(x, y) {
+      mouse.x = (x / window.innerWidth) * 2 - 1;
+      mouse.y = -(y / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      return raycaster.ray;
+    }
+
+    function projectPointOnPlane(point, planePoint, planeNormal) {
+      const diff = point.clone().sub(planePoint);
+      const dist = diff.dot(planeNormal);
+      return point.clone().sub(planeNormal.clone().multiplyScalar(dist));
+    }
+
+    function onTouchStart(event) {
+      event.preventDefault();
+      const touch = event.touches[0];
+      const ray = screenToRay(touch.clientX, touch.clientY);
+      const toolWorldPos = toolMesh.getWorldPosition(new THREE.Vector3());
+      const dist = ray.origin.distanceTo(toolWorldPos);
+      const closestPoint = ray.origin.clone().add(ray.direction.clone().multiplyScalar(dist));
+      if (closestPoint.distanceTo(toolWorldPos) < 0.6) {
+        touchId = event.touches[0].identifier;
+        toolActive = true;
+      }
+    }
+
+    function onTouchMove(event) {
+      event.preventDefault();
+      for (let i = 0; i < event.touches.length; i++) {
+        const touch = event.touches[i];
+        if (touch.identifier === touchId && toolActive) {
+          const ray = screenToRay(touch.clientX, touch.clientY);
+          const planePoint = rotationAxis.position;
+          const planeNormal = camera.getWorldDirection(new THREE.Vector3());
+          const worldPoint = projectPointOnPlane(ray.origin, planePoint, planeNormal);
+          toolMesh.position.copy(worldPoint);
+          toolMesh.position.clampLength(0, 3); // Limit distance
+        }
+      }
+    }
+
+    function onTouchEnd(event) {
+      event.preventDefault();
+      for (let i = 0; i < event.changedTouches.length; i++) {
+        if (event.changedTouches[i].identifier === touchId) {
+          toolActive = false;
+          touchId = null;
+        }
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

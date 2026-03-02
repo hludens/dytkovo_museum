@@ -1,0 +1,334 @@
+{
+  "pages": [
+    {
+      "title": "Бём Елизавета Меркурьевна",
+      "text": "Известная русская художница-график, родилась в 1843 году в Петербурге. Иллюстрировала произведения Толстого и Тургенева. Работала в Русском стиле на Дятьковской хрустальной фабрике. За изделия получила Золотые медали на международной выставке в Чикаго.",
+      "thumbnail": "chapters/artists/img/slide1/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide1/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Часть набора «Зима»",
+          "text": "",
+          "image": "chapters/artists/img/slide1/1.jpg"
+        },
+        {
+          "title": "",
+          "text": "",
+          "image": "chapters/artists/img/slide1/2.jpg"
+        },
+        {
+          "title": "",
+          "text": "",
+          "type": "video",
+          "video": "chapters/video-1.mp4"
+        }
+      ]
+    },
+    {
+      "title": "Шувалов Евграф Сергеевич",
+      "text": "Народный художник РСФСР, родился в 1912 году в Дятьково. С 1950 года работал художником на Дятьковском хрустальном заводе. Создатель сервиза «Банкетный», участник Великой Отечественной войны и член Союза художников СССР.",
+      "thumbnail": "chapters/artists/img/slide2/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide2/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Сервиз «Банкетный»",
+          "text": "Работа в лучших традициях русского стеклоделия",
+          "image": "chapters/artists/img/slide2/shuvalov1.jpg"
+        },
+        {
+          "title": "",
+          "text": "",
+          "image": "chapters/artists/img/slide2/shuvalov2.jpg"
+        },
+        {
+          "title": "",
+          "text": "",
+          "image": "chapters/artists/img/slide2/shuvalov3.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Липская Анна Александровна",
+      "text": "Заслуженный художник РСФСР, окончила Высший художественно-технический институт в 1927 году. Главный художник управления стекольной промышленности с 1938 по 1957 год. Работала на Дятьковском, Гусь-Хрустальном и Ленинградском заводах.",
+      "thumbnail": "chapters/artists/img/slide3/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide3/artist.jpg",
+      "slideshow": [
+        {
+          "title": "",
+          "text": "",
+          "image": "chapters/artists/img/slide3/1.jpg"
+        },
+        {
+          "title": "",
+          "text": "",
+          "image": "chapters/artists/img/slide3/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Ростовцева Нина Николаевна",
+      "text": "Выпускница Изополитуниверситета (1936) и искусствовед МГУ (1958). Работала в лаборатории художественного стекла, затем — на заводах «Неман» и им. Дзержинского. Основные работы выполнены на Дятьковском, Гусь-Хрустальном и «Красный гигант».",
+      "thumbnail": "chapters/artists/img/slide4/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide4/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Ваза «Солнечный свет»",
+          "text": "Эксперимент с многослойным стеклом",
+          "image": "chapters/artists/img/slide4/1.jpg"
+        },
+        {
+          "title": "Сервиз «Морозные узоры»",
+          "text": "Гравировка под зимние орнаменты",
+          "image": "chapters/artists/img/slide4/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Антонова Галина Александровна",
+      "text": "Заслуженный художник РСФСР, училась в Московском институте прикладного искусства и Ленинградском училище им. Мухиной. С 1975 по 1984 год работала на Дятьковском хрустальном заводе. Участник отечественных и зарубежных выставок с 1958 года.",
+      "thumbnail": "chapters/artists/img/slide5/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide5/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Декоративная композиция «Уроки» ",
+          "text": "С использованием цветного напыления",
+          "image": "chapters/artists/img/slide5/1.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Мачнев Иван Васильевич",
+      "text": "Заслуженный художник РСФСР, выпускник Ленинградского училища им. Мухиной. С 1975 года работал на Дятьковском хрустальном заводе. Лауреат Золотой медали Академии художеств России. Участник международных выставок.",
+      "thumbnail": "chapters/artists/img/slide6/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide6/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Декоративная композиция «Папоротник»",
+          "text": "",
+          "image": "chapters/artists/img/slide6/1.jpg"
+        },
+        {
+          "title": "Набор «Приятель»",
+          "text": "",
+          "image": "chapters/artists/img/slide6/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Мачнева Иллария Анатольевна",
+      "text": "Родилась в 1949 году, закончила Ленинградское училище им. Мухиной. Работала на Саратовском заводе “Техстекло”, затем — на Дятьковском хрустальном заводе с 1977 по 1994 год. Участник международных выставок.",
+      "thumbnail": "chapters/artists/img/slide7/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide7/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Декоративная композиция «Новоселье» ",
+          "text": "",
+          "image": "chapters/artists/img/slide7/1.jpg"
+        },
+        {
+          "title": "Сервиз «Снежинка»",
+          "text": "С изображением зимних узоров",
+          "image": "chapters/artists/img/slide7/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Колодин Иван Степанович",
+      "text": "Выпускник Московского училища (бывш. Строгановское), работал на Дятьковском хрустальном заводе с 1969 по 1975 год. Участвовал в международных и отечественных выставках. Творчество отличалось сочетанием классики и авангарда.",
+      "thumbnail": "chapters/artists/img/slide8/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide8/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Бокал «Современность»",
+          "text": "С абстрактным дизайном",
+          "image": "chapters/artists/img/slide8/1.jpg"
+        },
+        {
+          "title": "Сервиз «Геометрия»",
+          "text": "С минималистичным оформлением",
+          "image": "chapters/artists/img/slide8/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Грабарь Мирона Владимировна",
+      "text": "Заслуженный художник РСФСР, родилась в 1938 году. Работала на Дятьковском хрустальном заводе с 1961 по 1975 год, была главным художником в 1973–1974 годах. Участник российских и зарубежных выставок.",
+      "thumbnail": "chapters/artists/img/slide9/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide9/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Ваза «Рассвет»",
+          "text": "С переливающимися переходами цвета",
+          "image": "chapters/artists/img/slide9/1.jpg"
+        },
+        {
+          "title": "Сервиз «Луговые цветы»",
+          "text": "С нежным орнаментом дикорастущих растений",
+          "image": "chapters/artists/img/slide9/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Шевченко Виктор Яковлевич",
+      "text": "Заслуженный художник РСФСР, выпускник Ленинградского училища им. Мухиной. Работал на Дятьковском и Вышневолоцком заводах. Автор множества изделий в духе русской традиции. Участник международных выставок.",
+      "thumbnail": "chapters/artists/img/slide10/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide10/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Кубок «Осенний вечер»",
+          "text": "С декором осенних листьев",
+          "image": "chapters/artists/img/slide10/1.jpg"
+        },
+        {
+          "title": "Сервиз «Зимушка»",
+          "text": "С морозными узорами",
+          "image": "chapters/artists/img/slide10/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Кизлов Михаил Михайлович",
+      "text": "Заслуженный художник РСФСР, учился в МВХПУ как заводской стипендиат. С 1974 по 2005 год работал на Дятьковском хрустальном заводе, был главным художником с 1978 по 1993 год. Награждён орденом «Знак Почёта».",
+      "thumbnail": "chapters/artists/img/slide11/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide11/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Кубок «Юбилейный»",
+          "text": "К 100-летию завода",
+          "image": "chapters/artists/img/slide11/1.jpg"
+        },
+        {
+          "title": "Сервиз «Праздник»",
+          "text": "С золотыми вставками и орнаментом",
+          "image": "chapters/artists/img/slide11/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Вольнова Евгения Ивановна",
+      "text": "Заслуженный художник РФ, окончила МВХПУ в 1974 году. Работала на различных стекольных заводах, с 1989 по 2005 год — на Дятьковском хрустальном заводе. Лауреат медалей Российской академии художеств.",
+      "thumbnail": "chapters/artists/img/slide12/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide12/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Ваза «Скандинавия»",
+          "text": "С северными орнаментами",
+          "image": "chapters/artists/img/slide12/1.jpg"
+        },
+        {
+          "title": "Сервиз «Сказка зимы»",
+          "text": "С морозными узорами и золотом",
+          "image": "chapters/artists/img/slide12/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Чумакова Зинаида Фёдоровна",
+      "text": "Заслуженный художник РСФСР, родилась в Дятьково в 1946 году. Окончила МВХПУ, с 1974 по 2006 год работала на Дятьковском хрустальном заводе. Участник отечественных и зарубежных выставок.",
+      "thumbnail": "chapters/artists/img/slide13/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide13/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Бокал «Весенний»",
+          "text": "С изображением цветов и бабочек",
+          "image": "chapters/artists/img/slide13/1.jpg"
+        },
+        {
+          "title": "Сервиз «Лето»",
+          "text": "С яркими красками и орнаментами",
+          "image": "chapters/artists/img/slide13/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Фёдоров Борис Владимирович",
+      "text": "Заслуженный художник РСФСР, родился в Калинине в 1948 году. Окончил Ленинградское училище им. Мухиной. Работал на Дятьковском хрустальном заводе с 1976 по 1981 год. Участник международных выставок.",
+      "thumbnail": "chapters/artists/img/slide14/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide14/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Кубок «Праздник»",
+          "text": "С праздничным орнаментом",
+          "image": "chapters/artists/img/slide14/1.jpg"
+        },
+        {
+          "title": "Сервиз «Сказочный»",
+          "text": "С элементами сказочной живописи",
+          "image": "chapters/artists/img/slide14/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Погребной Владимир Константинович",
+      "text": "Заслуженный художник РФ, работал на Дятьковском хрустальном заводе с 1976 по 2005 год. После окончания ЛВХПУ им. Мухиной стал членом Союза художников. Участник международных выставок.",
+      "thumbnail": "chapters/artists/img/slide15/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide15/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Кубок «Осенний»",
+          "text": "С орнаментом осенних листьев",
+          "image": "chapters/artists/img/slide15/1.jpg"
+        },
+        {
+          "title": "Сервиз «Зима»",
+          "text": "С морозными узорами",
+          "image": "chapters/artists/img/slide15/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Котов Владимир Иванович",
+      "text": "Заслуженный художник РСФСР, выпускник ЛВХПУ им. Мухиной. С 1968 по 1988 год работал на Дятьковском хрустальном заводе. Лауреат премии Ленинского комсомола. Участник международных выставок.",
+      "thumbnail": "chapters/artists/img/slide16/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide16/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Кубок «Юбилейный»",
+          "text": "К 50-летию завода",
+          "image": "chapters/artists/img/slide16/1.jpg"
+        },
+        {
+          "title": "Сервиз «Весна»",
+          "text": "С изображением первых цветов",
+          "image": "chapters/artists/img/slide16/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Кизлов Илья Михайлович",
+      "text": "Родился в Дятьково в 1971 году, окончил МВХПУ. Работал на Дятьковском хрустальном заводе с 1995 по 2006 год. Член Союза дизайнеров с 1996 года. Участник международных выставок.",
+      "thumbnail": "chapters/artists/img/slide17/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide17/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Сервиз «Сказочный замок»",
+          "text": "С элементами фэнтези",
+          "image": "chapters/artists/img/slide17/1.jpg"
+        },
+        {
+          "title": "Кубок «Праздник детства»",
+          "text": "С изображением игрушек",
+          "image": "chapters/artists/img/slide17/2.jpg"
+        }
+      ]
+    },
+    {
+      "title": "Шувалов Сергей Евграфович",
+      "text": "Родился в Дятьково в 1955 году, окончил МВХПУ в 1981 году. Работал художником на Дятьковском хрустальном заводе с 1981 по 2015 год. Член Союза дизайнеров. Участник международных выставок.",
+      "thumbnail": "chapters/artists/img/slide18/thumbnail_artist.jpg",
+      "image": "chapters/artists/img/slide18/artist.jpg",
+      "slideshow": [
+        {
+          "title": "Сервиз «Сказочная страна»",
+          "text": "С изображением сказочных персонажей",
+          "image": "chapters/artists/img/slide18/1.jpg"
+        },
+        {
+          "title": "Кубок «Детство»",
+          "text": "С тематикой детских воспоминаний",
+          "image": "chapters/artists/img/slide18/2.jpg"
+        }
+      ]
+    }
+  ]
+}

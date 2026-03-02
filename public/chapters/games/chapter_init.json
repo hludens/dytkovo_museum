@@ -1,0 +1,31 @@
+{
+  "pages": [
+    {
+      "title": "Игры для детей",
+      "text": "Выберите игру и погрузитесь в увлекательный мир стеклоделия!",
+
+      "games": [
+        {
+          "title": "Память",
+          "screenshot": "chapters/games/img/game_memory.jpg",
+          "url": "puzzle"
+        },
+        {
+          "title": "Вращение",
+          "screenshot": "chapters/games/img/spin.png",
+          "url": "rotate"
+        },
+        {
+          "title": "Сдвиг",
+          "screenshot": "chapters/games/img/shift.png",
+          "url": "shift"
+        },
+        {
+          "title": "Хрустальная головоломка",
+          "screenshot": "chapters/games/img/15.png",
+          "url": "15"
+        }
+      ]
+    }
+  ]
+}

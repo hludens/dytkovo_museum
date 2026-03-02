@@ -1,0 +1,87 @@
+/* === Общие глобальные стили === */
+/* === Общие глобальные стили === */
+:root {
+	--base-dark: rgb(9, 35, 73);
+	--base-light: rgb(14, 112, 177);
+	--acsent-dark: rgb(137, 20, 247);
+	--acsent-light: #a36ee9;
+	
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.section-title h1 {
+  font-size: 2.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  color: #130068;
+}
+
+.section-title .page-title {
+  font-size: 2rem;
+  color: #616161;
+}
+
+
+
+
+.seperator-wrapper {
+  width: 100%;  
+  .seperator {
+    width: 3000px;
+    height: 5px;
+    animation: rotate 3s infinite linear;
+    -webkit-animation: rotate 3s infinite linear;
+  }
+  
+}
+
+@-webkit-keyframes rotate {
+  from {
+    background-position: -3000px;
+  }
+  to { 
+    background-position: 0px;
+  }
+}
+
+@keyframes rotate {
+  from {
+    background-position: -3000px;
+  }
+  to { 
+    background-position: 0px;
+  }
+}
+
+.gradient {
+background: -moz-linear-gradient(left,  rgba(48,255,144,1) 0%, rgb(45, 183, 237) 25%, rgba(201,152,38,1) 50%, rgba(48,255,230,1) 75%, rgba(48,255,144,1) 100%); /* FF3.6+ */
+background: -webkit-linear-gradient(left,  rgba(48,255,144,1) 0%,rgb(45, 183, 237) 25%,rgba(201,152,38,1) 50%,rgba(48,255,230,1) 75%,rgba(48,255,144,1) 100%); /* Chrome10+,Safari5.1+ */
+
+
+}

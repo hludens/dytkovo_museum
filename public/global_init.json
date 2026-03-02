@@ -1,0 +1,10 @@
+{
+  "menu": [
+    { "key": "about", "name": "Музей","icon":"assets/icons/about.png" },
+    { "key": "technology", "name": "Технология", "icon":"assets/icons/technology.png" },
+    { "key": "exposition", "name": "Экспозиция", "icon":"assets/icons/exposition1.png" },
+    { "key": "artists", "name": "Художники",   "icon":"assets/icons/artists.png" },
+    { "key": "children", "name": "Музей - детям", "icon":"assets/icons/children.png" },
+    { "key": "games", "name": "Игры", "icon":"assets/icons/games1.png" }
+  ]
+}

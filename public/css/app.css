@@ -1,0 +1,124 @@
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #e0f7fa, #87caf783, #b3e5fc);
+  font-family: sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  padding-bottom: 120px; /* место под миниатюры */
+}
+.gameapp-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #e0f7fa, #87caf783, #b3e5fc);
+  font-family: sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  
+}
+#gamebody {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  
+}
+.hidden{
+    display: none;
+}
+
+#winMessage {
+  
+  font-size: 24px;
+  color: green;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+#reset-button {
+    font-size: 16px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+#reset-button:hover {
+    background-color: #0b7dda;
+}
+
+
+.background-effects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -2;
+  
+  background: linear-gradient(180deg,#f2f1fc,#cae3f9,#f1f4ff,#1e528e,#85c4ff,#265889) repeat scroll 0 0 / 200% 200%;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 0%;
+    opacity: 0.9;
+  }
+  50% {
+    background-position: 100% 100%;
+    opacity: 0.4;
+  }
+  100% {
+    background-position: 0% 0%;
+    opacity: 0.9;
+  }
+}
+
+.background-effects .top {
+  position: absolute;
+  width: 100vw;
+  height: 9rem;
+  opacity: 0.8;
+  top: 0%;
+  left: 0%;
+  background-color: #b48bf57a;
+}
+.background-effects .gradient-blob {
+  position: absolute;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+}
+
+.background-effects .top-left {
+  top: -10%;
+  left: 10%;
+  background-color: #7130da;
+  animation: pulse 13s infinite;
+}
+
+.background-effects .bottom-right {
+  bottom: -10%;
+  right: 10%;
+  background-color: #bffdfd;
+  animation: pulse 11s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.9);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+}

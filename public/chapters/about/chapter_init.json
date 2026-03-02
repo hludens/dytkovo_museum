@@ -1,0 +1,37 @@
+{
+  "hideThumbnailScroll": true,
+  "pages": [
+    {
+      "title": "Основание музея",
+      "text": "Музей дятьковского хрусталя был основан в 1976 году, унаследовав богатейшую коллекцию заводской образцовой комнаты. Он стал первым специализированным учреждением в СССР, посвящённым истории и развитию хрустального производства.",
+      "thumbnail": "chapters/about/img/thumbnail_01.jpg",
+      "image": "chapters/about/img/photo_museum.jpg"
+    },
+    {
+      "title": "Историческое значение",
+      "text": "Музей расположен в городе Дятьково, известном с XVIII века своими мастерскими по производству стекла и хрусталя. Коллекция музея охватывает периоды от ручной работы XIX века до современных инноваций в обработке стекла.",
+      "thumbnail": "chapters/about/img/thumbnail_02.jpg",
+      "image": "chapters/about/img/about_exposition1.jpg"
+    },
+    {
+      "title": "Экспозиция",
+      "text": "В музее представлены уникальные экспонаты: хрустальные изделия царской России, советские образцы, а также современные работы  мастеров и художников завода. ",
+      "thumbnail": "chapters/about/img/thumbnail_03.jpg",
+      "image": "chapters/about/img/about_exposition2.jpg"
+    },
+    {
+      "title": "Сегодня",
+      "text": "Сегодня музей активно участвует в выставочной деятельности, популяризируя традиции дятьковского хрусталя. ",
+      "thumbnail": "chapters/about/img/thumbnail_04.jpg",
+      "image": "chapters/about/img/about_exposition3.jpg"
+    },
+    {
+      "title": "Будущее",
+      "text": "Музею хрусталя будущее не грозит разрушением, а только надстройки и развитие обещает",
+      "thumbnail": "chapters/about/img/thumbnail_05.jpg",
+      "width": "100px",
+      "height": "100px",
+      "video": "chapters/about/img/general.mp4"
+    }
+  ]
+}
